@@ -1,0 +1,22 @@
+<?php
+    define('USERNAME', 'laravel_user');
+    define('PASSWORD', 'laravel_pass');
+
+    try {
+        /// DB接続を試みる
+        $db  = new PDO('mysql:host=host.docker.internal;dbname=laravel_db;port=3306', USERNAME, PASSWORD);
+        $msg = "MySQL への接続確認が取れました。";
+        } catch (PDOException $e) {
+        $isConnect = false;
+        $msg       = "MySQL への接続に失敗しました。<br>(" . $e->getMessage() . ")";
+    }
+
+    // レコード追加
+    $sql = "INSERT INTO fruits_list (id, name, price) VALUES (null, :name, :price)";
+    if ($stmt = $pdo->prepare($sql)) {
+        $stmt->bindValue(':name', $name, PDO::PARAM_STR);
+        $stmt->bindValue(':price', $price, PDO::PARAM_INT);
+        $stmt->execute();
+    }
+
+    $pdo = null;
