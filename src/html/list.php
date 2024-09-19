@@ -82,7 +82,7 @@
         <div class="page-header">
             <h4>ToDoリスト</h4>
             <div class="page-header-button">
-                <button onclick="location.href='./addition_page.php'">追加</button>
+                <button onclick="location.href='./addition.php'">追加</button>
             </div>
         </div>
         <table class="table" border="1">
@@ -131,7 +131,7 @@
                     </td>
                     <td>
                         <div class="test-container">
-                            <button onclick="location.href='./update_page.php?id=<?php echo $todo['Id'] ?>'" class="test-button">編集</button>
+                            <button onclick="location.href='./update.php?id=<?php echo $todo['Id'] ?>'" class="test-button">編集</button>
                             <!-- 仮のid -->
                             <button onclick="handleClickDeleteButton(<?php echo $todo['Id'] ?>)" class="test-button">消去</button>
                         </div>
