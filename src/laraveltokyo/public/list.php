@@ -11,6 +11,23 @@
     $msg       = "MySQL への接続に失敗しました。<br>(" . $e->getMessage() . ")";
     }
 
+    if (isset($_POST['delete'])) {
+        $delete_id = (int)$_POST['delete'];
+
+        // レコード削除
+        $delete_sql = "DELETE FROM `TodoList` WHERE Id=:id";
+        $delete_stmt = $db->prepare($delete_sql);
+        $delete_stmt->bindParam(':id', $delete_id, PDO::PARAM_STR);
+        $delete_res = $delete_stmt->execute();
+
+        if (!$delete_res){
+            print('データの削除に失敗しました<br>');
+            print_r($db->errorCode());
+            print_r($db->errorInfo());
+            exit();
+        }
+    }
+
     $sql = "SELECT * FROM TodoList;";
     
     $sth = $db->query($sql);
@@ -36,6 +53,8 @@
     <title></title>
     <style></style>
     <link rel="stylesheet" href="style.css" type="text/css">
+
+    
 
     <script>
         // 削除ボタン押したときの処理
