@@ -4,34 +4,30 @@
 
     $error_message = null;
 
-    try {
-        /// DB接続を試みる
-        $db  = new PDO('mysql:host=host.docker.internal;dbname=laravel_db;port=3306', USERNAME, PASSWORD);
-        $msg = "MySQL への接続確認が取れました。";
-        } catch (PDOException $e) {
-        $isConnect = false;
-        $msg       = "MySQL への接続に失敗しました。<br>(" . $e->getMessage() . ")";
-    }
+    require_once('db_connect.php');
     
-    $id =  (int)$_GET["id"]; // Queryからとってくる
-
-    $select_sql = "SELECT `Titel`, `Text` FROM `TodoList` WHERE `Id` = :id;";
-    $select_stmt = $db->prepare($select_sql);
-    $select_stmt->bindParam(':id', $id, PDO::PARAM_INT);
-    $select_res = $select_stmt->execute();
-
-    $todos = $select_stmt->fetchAll(PDO::FETCH_ASSOC);
-    $todo = $todos[0];
-
+        try {
+            //データベースに接続
+            $db = db_connect();
+            //接続角煮が取れた
+            }catch (PDOException $e) {
+            //接続に失敗した
+            $isConnect = false;
+        }
 
     if (isset($_POST['edit'])) {
-        if ($_POST['title'] == "") {
+        $title = $_POST['title']; 
+        $text = $_POST['text'];
+
+        if ($title == "") {
             $error_message = "タイトルを入力してください。";
-        } else {
+        } else if (strlen($title) > 20) {
+            $error_message = "タイトルは20文字以内で入力してください。";
+        } else if (strlen($text) > 200) {
+            $error_message = "内容は200文字以内で入力してください。";
+        }  else {
 
             // レコード更新
-            $title = $_POST['title']; 
-            $text = $_POST['text'];
             $update_sql = "UPDATE `TodoList` SET `Titel`=:title,`Text`=:text WHERE `Id`=:id";
             $update_stmt = $db->prepare($update_sql);
             $update_stmt->bindParam(':title', $title, PDO::PARAM_STR);
@@ -49,6 +45,16 @@
             header('Location: ./list.php');
             exit();
         }
+    } else {
+        $id =  (int)$_GET["id"]; 
+    
+        $select_sql = "SELECT `Titel`, `Text` FROM `TodoList` WHERE `Id` = :id;";
+        $select_stmt = $db->prepare($select_sql);
+        $select_stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $select_res = $select_stmt->execute();
+    
+        $todos = $select_stmt->fetchAll(PDO::FETCH_ASSOC);
+        $todo = $todos[0];
     }
 ?>
 
@@ -77,7 +83,7 @@
         <form action="#" method="post">
             <div class="content-title-area">
                 <p>タイトル</p>
-                <input name="title" class="content-title-input" value="<?php echo $todo["Titel"]; ?>"type="text" maxlength="20"/>
+                <input name="title" class="content-title-input" value="<?php echo $todo["Titel"]; ?>"type="text" maxlength="20" required/>
             </div>
             <div class="content-content-area">
                 <p>内容</p>

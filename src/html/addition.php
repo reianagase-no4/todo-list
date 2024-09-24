@@ -4,19 +4,24 @@
 
     $error_message = null;
 
-    try {
-        /// DB接続を試みる
-        $db  = new PDO('mysql:host=host.docker.internal;dbname=laravel_db;port=3306', USERNAME, PASSWORD);
-        $msg = "MySQL への接続確認が取れました。";
-        } catch (PDOException $e) {
-        $isConnect = false;
-        $msg       = "MySQL への接続に失敗しました。<br>(" . $e->getMessage() . ")";
-    }
-
-    if (isset($_POST['add'])) {
-        if ($_POST['title'] == "") {
+    require_once('db_connect.php');
+    
+        try {
+            //データベースに接続
+            $db = db_connect();
+            //接続確認が取れた
+            }catch (PDOException $e) {
+            //接続に失敗した
+            $isConnect = false;
+        }
+        if ($title == "") {
             $error_message = "タイトルを入力してください。";
-        } else {
+        } else if (strlen($title) > 20) {
+            $error_message = "タイトルは20文字以内で入力してください。";
+        } else if (strlen($text) > 200) {
+            $error_message = "内容は200文字以内で入力してください。";
+        }  else {
+
             // レコード追加
             $sql = "INSERT INTO `TodoList`(`Titel`, `Text`) VALUES (:title, :text)";
             $stmt = $db->prepare($sql);
@@ -62,7 +67,7 @@
         <form action="" method="post">
             <div class="content-title-area">
                 <p>タイトル</p>
-                <input name="title" class="content-title-input" type="text" maxlength="20"/>
+                <input name="title" class="content-title-input" type="text" maxlength="20"required/>
             </div>
             <div class="content-content-area">
                 <p>内容</p>

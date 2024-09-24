@@ -28,6 +28,7 @@ td{
     display: contents;
 }
 
+/*追加ボタン*/
 .page-header-button {
     display: flex;
     align-items: end;
@@ -37,6 +38,7 @@ td{
     white-space: nowrap;
 }
 
+/*編集ボタンと消去ボタン*/
 .test-container{
     display: flex;
     flex-direction: column;
