@@ -2,15 +2,17 @@
     define('USERNAME', 'laravel_user');
     define('PASSWORD', 'laravel_pass');
 
-    try {
-    /// DB接続を試みる
-    $db  = new PDO('mysql:host=host.docker.internal;dbname=laravel_db;port=3306', USERNAME, PASSWORD);
-    $msg = "MySQL への接続確認が取れました。";
-    } catch (PDOException $e) {
-    $isConnect = false;
-    $msg       = "MySQL への接続に失敗しました。<br>(" . $e->getMessage() . ")";
-    }
-
+    require_once('db_connect.php');
+    
+        try {
+            //データベースに接続
+            $db = db_connect();
+            //接続確認が取れた
+            }catch (PDOException $e) {
+            //接続に失敗した
+            $isConnect = false;
+        }
+        
     if (isset($_POST['delete'])) {
         $delete_id = (int)$_POST['delete'];
 
@@ -34,12 +36,6 @@
 
     $todos = $sth->fetchAll(PDO::FETCH_ASSOC);
 
-
-
-    // echo "<pre>";
-    // var_dump($todos);
-    // echo "</pre>";
-    // exit();
 
     $db = null;
 ?>
@@ -82,7 +78,7 @@
         <div class="page-header">
             <h4>ToDoリスト</h4>
             <div class="page-header-button">
-                <button onclick="location.href='./addition_page.php'">追加</button>
+                <button onclick="location.href='./addition.php'">追加</button>
             </div>
         </div>
         <table class="table" border="1">
@@ -108,8 +104,6 @@
                     </th>
                     <td>
                         <?php
-                            // $title = 'テキストタイトル';
-                            // echo $title;
                             echo $todo["Titel"];
                         ?>
                     </td>
@@ -131,7 +125,7 @@
                     </td>
                     <td>
                         <div class="test-container">
-                            <button onclick="location.href='./update_page.php?id=<?php echo $todo['Id'] ?>'" class="test-button">編集</button>
+                            <button onclick="location.href='./update.php?id=<?php echo $todo['Id'] ?>'" class="test-button">編集</button>
                             <!-- 仮のid -->
                             <button onclick="handleClickDeleteButton(<?php echo $todo['Id'] ?>)" class="test-button">消去</button>
                         </div>
